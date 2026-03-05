@@ -3,4 +3,5 @@
 [ ] Add transpose so its possible to turn into row
 [ ] Add flags for turning contents of textfile into col or row
 [ ] Add CSV preview stuff (amount of rows, fetcher etc)
-[ ] Model and add the delimiter option  
+	- Summary of numbers, summary of rows etc. Think Cloc but for csv
+[/] Model and add the delimiter option  
