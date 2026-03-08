@@ -23,7 +23,7 @@ func main() {
 	}
 
 	for _, arg := range os.Args[1:] {
-		writeCSV(appendCol(readColumn(readFromFile(arg))), "output.csv")
+		writeCSV((readColumn(readFromFile(arg))), "output.csv")
 	}
 
 	// Step 1: read as column
@@ -80,6 +80,7 @@ func readColumn(s string) [][]string {
 }
 
 // appendCol appends additional columns to each row
+
 func appendCol(trg [][]string, srcs ...[][]string) [][]string {
 	rows := len(trg)
 	if rows == 0 && len(srcs) > 0 {
@@ -121,8 +122,9 @@ func writeCSV(table [][]string, path string) {
 
 	if len(records) != 0 {
 		// Write data from the table to the records:
+		appendCol(records, table)
 		for i := 0; i < len(records); i++ {
-			records[i] = append(records[i], table[i]...) // Just append every row from the table
+			//records[i] = append(records[i], table[i]...) // Just append every row from the table
 		}
 	} else {
 		records = append(records, table...)

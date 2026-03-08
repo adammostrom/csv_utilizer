@@ -18,7 +18,10 @@ by a random amount
 of newlines
 
 
-testline this line wont make it
+
+TEST NEW LINE 
 
 
-Im not entirely sure why I wont get a index out of bounds here 
+AND THIS ALSOANOTHER SNEAKY LINE
+ANOTHER SNEAKY LINE\n
+ANOTHER SNEAKY LINE
