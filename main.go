@@ -123,9 +123,6 @@ func writeCSV(table [][]string, path string) {
 	if len(records) != 0 {
 		// Write data from the table to the records:
 		appendCol(records, table)
-		for i := 0; i < len(records); i++ {
-			//records[i] = append(records[i], table[i]...) // Just append every row from the table
-		}
 	} else {
 		records = append(records, table...)
 	}

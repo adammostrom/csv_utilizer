@@ -6,7 +6,10 @@
 [ ] Add CSV preview stuff (amount of rows, fetcher etc)
 	- Summary of numbers, summary of rows etc. Think Cloc but for csv
 [/] Model and add the delimiter option  
-[ ] - 2026-03-08: Fix so that the columns can be varying length, so each column that is appended just adds an empty string for the values it misses. Currently column1 becomes a "base column".
+
+[X] - 2026-03-08: Fix so that the columns can be varying length, so each column that is appended just adds an empty string for the values it misses. 
+- Fixed 2026-03-08. Currently column1 becomes a "base column".
+	
 
 
 
