@@ -1,48 +1,47 @@
 package main
 
+/*
+FLOW: Give it a csv as target, give it a text file with data
+Choose if data is columns or rows
+Append to the same csv
+
+
+*/
 import (
 	"encoding/csv"
+	"fmt"
+	"log"
 	"os"
 	"strings"
 )
 
 func main() {
-	raw := `Internal Flash Checksum
-Internal SRAM Checksum
-Internal SRAM Write Read
-External SRAM Checksum
-Internal SRAM Write Read
-Co-Pro Red Communication
-asdasda
-asd
-adsdaasdad
-asdasda
-error,error
-qwqwd
-asdasdasd
-`
 
-	/* 	raw2 := `1
-	   	2
-	   	3
-	   	4
-	   	56
-	   	` */
-	raw3 := `A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z;Å;Ä;Ö`
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: go run main.go <file.txt> <file.txt> ... ")
+		os.Exit(1)
+	}
+
+	for _, arg := range os.Args[1:] {
+		writeCSV(appendCol(readColumn(readFromFile(arg))), "output.csv")
+	}
 
 	// Step 1: read as column
 	//newspaceDelimiters := []string{"\r\n", "\n"}
 	//semiColonDelimiters := []string{";", ";"}
 
-	col := readColumn(normalizeText(raw))
-	//col1 := readColumn(raw2)
-	col2 := readColumn(normalizeText(raw3))
+	/* 	col1 := readFromFile("text.txt")
+	   	col2 := readFromFile("col2.txt")
+	   	col3 := readFromFile("col3.txt")
 
-	// Step 2: append a duplicate column (for demo)
-	table := appendCol(col, col2, col)
+	   	col_1 := readColumn(col1)
+	   	col_2 := readColumn(col2)
+	   	col_3 := readColumn(col3)
 
-	// Step 3: write CSV
-	writeCSV(table, "output.csv")
+	   	table := appendCol(col_1, col_2, col_3)
+
+	   	writeCSV(table, "output.csv") */
+
 }
 
 func normalizeText(s string) string {
@@ -53,10 +52,21 @@ func normalizeText(s string) string {
 	return s
 }
 
-// readColumn splits text into rows, each row is a single-column slice
+func readFromFile(path string) string {
+
+	data, err := os.ReadFile(path)
+	check(err)
+
+	s := normalizeText(string(data))
+
+	return s
+}
+
+// Read from file, then readColumn splits text into rows, each row is a single-column slice
 func readColumn(s string) [][]string {
+
 	//lines := strings.Split(strings.ReplaceAll(s, delimiter[0], delimiter[1]), delimiter[1])
-	lines := strings.FieldsFunc(s, func(r rune) bool {
+	lines := strings.FieldsFunc(string(s), func(r rune) bool {
 		return r == '\n' || r == '\t' || r == ';'
 	})
 	rows := [][]string{}
@@ -96,16 +106,62 @@ func appendCol(trg [][]string, srcs ...[][]string) [][]string {
 
 // writeCSV writes [][]string to a CSV file
 func writeCSV(table [][]string, path string) {
-	file, err := os.Create(path)
-	if err != nil {
-		panic(err)
-	}
+	file, err := os.Open(path)
+	check(err)
 	defer file.Close()
 
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
+	// Prepare to read the content of the csv file
+	reader := csv.NewReader(file)
 
-	for _, row := range table {
-		writer.Write(row)
+	// records now hold the read content
+	records, err := reader.ReadAll()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(records) != 0 {
+		// Write data from the table to the records:
+		for i := 0; i < len(records); i++ {
+			records[i] = append(records[i], table[i]...) // Just append every row from the table
+		}
+	} else {
+		records = append(records, table...)
+	}
+
+	out, err := os.Create("output.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer out.Close()
+
+	writer := csv.NewWriter(out)
+	writer.WriteAll(records)
+
+	if err := writer.Error(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+// Turn cols into rows, and rows into cols
+func transpose(matrix [][]string) ([][]string, error) {
+
+	if len(matrix) == 0 {
+		return nil, nil
+	}
+
+	for i, _ := range matrix {
+		if len(matrix[i]) != len(matrix[0]) {
+			return nil, fmt.Errorf("Matrix is not rectangular, irregluar length for: %v", matrix[i])
+		}
+		for j := i + 1; j < len(matrix); j++ {
+			matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+		}
+	}
+	return matrix, nil
+}
+
+func check(e error) {
+	if e != nil {
+		panic(e)
 	}
 }

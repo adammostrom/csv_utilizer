@@ -1,1 +1,0 @@
-Some text that is separated by whitespace and I want it into a column

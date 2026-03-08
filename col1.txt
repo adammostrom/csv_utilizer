@@ -1,7 +1,24 @@
 each line here
+
+
+
 should be a column
+
+
 they are separated
+
 by a random amount
+
+
+
+
+
+
+
 of newlines
+
+
 testline this line wont make it
-Im not entirely sure why I wont get a index out of bounds here
+
+
+Im not entirely sure why I wont get a index out of bounds here 
