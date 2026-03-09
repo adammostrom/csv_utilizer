@@ -1,15 +1,26 @@
 ## TODO
-[ ] Add text file as argument input
+[X] Add text file as argument input
 [ ] Add text file parser into raw string
-[ ] Add transpose so its possible to turn into row
-[ ] Add flags for turning contents of textfile into col or row
+[X] Add transpose so its possible to turn into row
 [ ] Add CSV preview stuff (amount of rows, fetcher etc)
 	- Summary of numbers, summary of rows etc. Think Cloc but for csv
 [/] Model and add the delimiter option  
 
-[X] - 2026-03-08: Fix so that the columns can be varying length, so each column that is appended just adds an empty string for the values it misses. 
+[X] 2026-03-08: Fix so that the columns can be varying length, so each column that is appended just adds an empty string for the values it misses. 
 - Fixed 2026-03-08. Currently column1 becomes a "base column".
-	
+[ ] Add flags
+	- [X] Add flag to specify column number like: -col 2 file1.txt
+	- [X] Add flag to add row instead of col
+	- [ ] Add delimiter option as flag:  --delimiter ","
+[ ] Add proper error checks:
+	- [ ] missing files
+	- [ ] column mismatch
+	- [ ] empty files
+	- [ ] malformed CSV
+[X] Add so that if csv doesnt exist, create one
+[ ] Add functionality to accept stdin so you can call it like: `pbpbin | csvfill target.csv -col 2`  	
+[ ] Add readme
+[ ] Structure it properly and clean
 
 
 
