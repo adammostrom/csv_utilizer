@@ -1,44 +1,42 @@
-# CSV UTLILIZER IN GO
+# CSV utilizer in go
 
-Idea: Take any text, decide the delimiter (tab, space, comma etc) from a text file, select which operation (to_column, to_row) and read the data from the textfile into a column or row, examples:
+Small tool for turning contents from text files into csv tables. 
+
+This tool was created to simplify extracting data from Microsoft Word tables.
+Copying Word tables into Excel often introduces formatting issues or data loss.
+This utility allows copying table contents into text files and converting them
+directly into CSV format, removing the Excel step entirely.
+
+## Assumptions
+The program assumes newline separates rows for the `-table` flag, the delimiter option will determine the data content for the columns
+
+## How to run
+
+Essentially copy the data from the entire table (or columns) into a text file. If no delimiter is selected, the default delimiter for tables will be TAB ('/t') for column separation and NEWLINE ('/n') for row separation.
+
+Run the program:
+`> go run main.go -target <file.csv> -table <data.txt>`
+
+For adding column(s) to an existing csv file:
+
+`> go run main.go -target <file.csv> -col <column.txt> -col <column2.txt> ...`
+
+For adding a delimiter option (will apply to all file-arguments)
+
+`> go run main.go -target <file.csv> -col <column.txt> -delimiter tab`
+
+## Flags
 
 
-inside test.txt:
-
-Some text that I want into a row
-
-go run main.go test.txt -row
-
-output :
-
-some,text,that,I,want,into,a,row
-
-
-go run main.go test.txt -col
-
-some,
-text,
-that,
-I,
-want,
-into,
-a,
-row,
-
-The trick becomes to add columns to each other, so if I have one column with data like 1,2,3,4,5:
-
-1,
-2,
-3,
-4,
-5,
-
-and I want to add another column to this, like a,b,c,d,e, it should become:
-
-1,a,
-2,b,
-3,c,
-4,d,
-5,e,
-
+Flags:
+-col string
+    Column files to append (can be repeated multiple times)
+-row string
+    File to write as a single row
+-table string
+    File to write as a table (multiple rows and columns)
+-target string
+    Target CSV file to append data to (required)
+-delimiter string
+    Delimiters to use when parsing input files (default: "\t\n;")
 

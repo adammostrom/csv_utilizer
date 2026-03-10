@@ -4,7 +4,8 @@
 [X] Add transpose so its possible to turn into row
 [ ] Add CSV preview stuff (amount of rows, fetcher etc)
 	- Summary of numbers, summary of rows etc. Think Cloc but for csv
-[/] Model and add the delimiter option  
+[X] Model and add the delimiter option  
+	- 2026-03-10: Added flag option, function that checks the input argument of the delimiter, and defaults to the basic delimiters if none given
 
 [X] 2026-03-08: Fix so that the columns can be varying length, so each column that is appended just adds an empty string for the values it misses. 
 - Fixed 2026-03-08. Currently column1 becomes a "base column".
@@ -13,11 +14,11 @@
 [ ] Add flags
 	- [X] Add flag to specify column number like: -col 2 file1.txt
 	- [X] Add flag to add row instead of col
-	- [ ] Add delimiter option as flag:  --delimiter ","
+	- [X] Add delimiter option as flag:  --delimiter ","
 [ ] Add proper error checks:
 	- [ ] missing files
 	- [ ] column mismatch
-	- [ ] empty files
+	- [X] empty files
 	- [ ] malformed CSV
 [X] Add so that if csv doesnt exist, create one
 [ ] Add functionality to accept stdin so you can call it like: `pbpbin | csvfill target.csv -col 2`  	
@@ -35,3 +36,7 @@ Decide how the flow should be, should I call it with argument 1 be the source cs
 
 
 Maybe for now, just have a CSV already made, assume headers exist, and just give it arguments as columns to add
+
+### 2026-03-10
+
+Added function so that a delimiter from a text file separates the rows, so in essence you can copy paste several columns into a text file and separate them by the delimiter

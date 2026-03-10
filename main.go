@@ -1,3 +1,26 @@
+// Package main provides a command-line utility for appending data to CSV files.
+// It supports reading data from text files and appending them as columns, rows, or tables
+// to a target CSV file. Users can specify custom delimiters to parse input files.
+//
+// Usage:
+//
+//	csv_utilizer -target output.csv [-col file1.txt file2.txt] [-row rowdata.txt] [-table tabledata.txt] [-delimiter "delim"]
+//
+// Flags:
+//
+//	-col string
+//	    Column files to append (can be repeated multiple times)
+//	-row string
+//	    File to write as a single row
+//	-table string
+//	    File to write as a table (multiple rows and columns)
+//	-target string
+//	    Target CSV file to append data to (required)
+//	-delimiter string
+//	    Delimiters to use when parsing input files (default: "\t\n;")
+//
+// The utility reads input files, parses them according to the specified format,
+// and appends the parsed data to the target CSV file in append mode.
 package main
 
 /*
@@ -37,34 +60,57 @@ func main() {
 	rowFile := flag.String("row", "", "Write as row")
 	tableFile := flag.String("table", "", "Write as a table")
 	target := flag.String("target", "", "target csv")
+	delimFlag := flag.String("delimiter", "\t\n;", "delimiters")
 
 	flag.Parse()
+
+	delimiters := []rune(*delimFlag)
 
 	if *target == "" {
 		fmt.Println("missing -target")
 		os.Exit(1)
 	}
 
-	// write columns
 	for _, col := range cols {
-		writeCSV(readColumn(readFromFile(col)), *target)
+		callCol(col, delimiters, *target)
 	}
 
-	// write row if provided
 	if *rowFile != "" {
-		data := readColumn(readFromFile(*rowFile))
-		transposed, err := transpose(data)
-		check(err)
-		writeCSV(transposed, *target)
+		callRow(*rowFile, delimiters, *target)
 	}
 
-	if *tableFile != ""{
-		writeCSV(readTable(readFromFile(*tableFile)), *target)
+	if *tableFile != "" {
+		callTable(*tableFile, delimiters, *target)
 	}
 
 	fmt.Println("row:", *rowFile)
 	fmt.Println("columns:", cols)
 	fmt.Println("target:", *target)
+	fmt.Println("delimiter:", *delimFlag)
+}
+
+// Reads from the file, parses data into table, writes table into csv.
+func callTable(tableFile string, delimiters []rune, target string) {
+	reads, err := readFromFile(tableFile)
+	check(err)
+	writeCSV(readTable(reads, delimiters), target)
+}
+
+// Reads from the file, parses data into columns, writes columns onto the csv (append mode).
+func callCol(col string, delimiters []rune, target string) {
+	reads, err := readFromFile(col)
+	check(err)
+	writeCSV(readColumn(reads, delimiters), target)
+}
+
+func callRow(rowFile string, delimiters []rune, target string) {
+	reads, err := readFromFile(rowFile)
+	check(err)
+	data := readColumn(reads, delimiters)
+
+	transposed, err := transpose(data)
+	check(err)
+	writeCSV(transposed, target)
 }
 
 func normalizeText(s string) string {
@@ -75,24 +121,50 @@ func normalizeText(s string) string {
 	return s
 }
 
-func readFromFile(path string) string {
+func readFromFile(path string) (string, error) {
 
 	data, err := os.ReadFile(path)
 	check(err)
 
+	if len(data) == 0 {
+		return "", fmt.Errorf("file is empty")
+	}
+
 	s := normalizeText(string(data))
 
-	return s
+	return s, nil
+}
+
+func parseDelimiters(delim string) []rune {
+	switch delim {
+	case "tab", "\\t":
+		return []rune{'\t'}
+	case "newline", "\n":
+		return []rune{'\n'}
+	case "semicolon", "semicol", ";":
+		return []rune{';'}
+	case "none", "":
+		return []rune{'\t', '\n', ';'} // Default to all of them
+
+	default:
+		return []rune(delim)
+	}
+
 }
 
 // Read from file, then readColumn splits text into rows, each row is a single-column slice
 // TODO: 2026-03-09: Implement delimiter for either many columns in the same file, or just general delimiters
-func readColumn(s string) [][]string {
+func readColumn(s string, delimiters []rune) [][]string {
 
-	//lines := strings.Split(strings.ReplaceAll(s, delimiter[0], delimiter[1]), delimiter[1])
+	dset := map[rune]bool{}
+
+	// Adds all the delimiters given and sets them to true.
+	for _, d := range delimiters {
+		dset[d] = true
+	}
 
 	lines := strings.FieldsFunc(string(s), func(r rune) bool {
-		return r == '\n' ||  r == ';' || r == '\t'
+		return dset[r] // Return where dset[r] is true (the delimiters)
 	})
 	rows := [][]string{}
 	for _, l := range lines {
@@ -104,10 +176,16 @@ func readColumn(s string) [][]string {
 	return rows
 }
 
-
 // Assume a delimiter separates the columns
 // TODO: Add delimiter option
-func readTable(s string) [][]string {
+func readTable(s string, delimiters []rune) [][]string {
+
+	dset := map[rune]bool{}
+
+	for _, d := range delimiters {
+		dset[d] = true
+	}
+
 	lines := strings.FieldsFunc(string(s), func(r rune) bool {
 		return r == '\n' // Assume only newline separates rows
 	})
@@ -116,7 +194,9 @@ func readTable(s string) [][]string {
 	for _, l := range lines {
 		l = strings.TrimSpace(l)
 		if l != "" {
-			cols := strings.Split(l, "\t")
+			cols := strings.FieldsFunc(string(l), func(r rune) bool {
+				return dset[r]
+			})
 			rows = append(rows, cols)
 		}
 	}
@@ -164,7 +244,7 @@ func writeCSV(table [][]string, path string) {
 	// records now hold the read content
 	records, err := reader.ReadAll()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	if len(records) != 0 {
@@ -211,22 +291,4 @@ func check(e error) {
 	if e != nil {
 		panic(e)
 	}
-}
-
-// TODO
-
-func addHeader() {
-
-}
-
-// TODO
-
-func viewCsv() {
-
-}
-
-// TODO
-
-func removeColumn() {
-
 }
