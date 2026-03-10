@@ -1,0 +1,7 @@
+0,Internal Flash Checksum,The co-processor reads and verifies the Flash’s checksum. This test is to verify the Flash. In case of failure – information security is impaired,Critical,Radio RT,Red Board,Tx&Rx
+1,Internal SRAM Checksum,The co-processor reads and verifies the SRAM’s checksum. This test is to verify the SRAM. In case of failure – information security is impaired,Critical,Radio RT,Red Board,Tx&Rx
+2,Internal SRAM Write Read,The co-processor writes and reads a designated pattern to the SRAM. This test is to verify the SRAM. In case of failure – information security is impaired,Critical,Radio RT,Red Board,Tx&Rx
+3,External SRAM Checksum,The co-processor reads and verifies the SRAM’s checksum. This test is to verify the SRAM. In case of failure – information security is impaired,Critical,Radio RT,Red Board,Tx&Rx
+4,External SRAM Write Read,The co-processor writes and reads a designated pattern to the SRAM. This test is to verify the SRAM. In case of failure – information security is impaired,Critical,Radio RT,Red Board,Tx&Rx
+5,Co-Pro Red Communication,The red GPP requests and reads the co-processor’s designated test registers. This test is to verify the bus between the co-processor and the red GPP. In case of failure – information security is impaired,Critical,Radio RT,Red Board,Tx&Rx
+6,Co-Pro to Red FPGA EBI Bus,The co-processor requests and reads the FPGA’s designated test registers. This test is to verify the bus between the co-processor and the red FPGA. In case of failure – information security is impaired,,Radio RT,Red Board,Tx&Rx
