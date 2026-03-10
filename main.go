@@ -35,6 +35,7 @@ func main() {
 	flag.Var(&cols, "col", "column files (can repeat multiple times)")
 
 	rowFile := flag.String("row", "", "Write as row")
+	tableFile := flag.String("table", "", "Write as a table")
 	target := flag.String("target", "", "target csv")
 
 	flag.Parse()
@@ -55,6 +56,10 @@ func main() {
 		transposed, err := transpose(data)
 		check(err)
 		writeCSV(transposed, *target)
+	}
+
+	if *tableFile != ""{
+		writeCSV(readTable(readFromFile(*tableFile)), *target)
 	}
 
 	fmt.Println("row:", *rowFile)
@@ -87,13 +92,32 @@ func readColumn(s string) [][]string {
 	//lines := strings.Split(strings.ReplaceAll(s, delimiter[0], delimiter[1]), delimiter[1])
 
 	lines := strings.FieldsFunc(string(s), func(r rune) bool {
-		return r == '\n' || r == '\t' || r == ';'
+		return r == '\n' ||  r == ';' || r == '\t'
 	})
 	rows := [][]string{}
 	for _, l := range lines {
 		l = strings.TrimSpace(l)
 		if l != "" {
 			rows = append(rows, []string{l})
+		}
+	}
+	return rows
+}
+
+
+// Assume a delimiter separates the columns
+// TODO: Add delimiter option
+func readTable(s string) [][]string {
+	lines := strings.FieldsFunc(string(s), func(r rune) bool {
+		return r == '\n' // Assume only newline separates rows
+	})
+
+	rows := [][]string{}
+	for _, l := range lines {
+		l = strings.TrimSpace(l)
+		if l != "" {
+			cols := strings.Split(l, "\t")
+			rows = append(rows, cols)
 		}
 	}
 	return rows
