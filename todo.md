@@ -10,8 +10,7 @@
 [X] - 2026-03-08: Fix so that the columns can be varying length, so each column that is appended just adds an empty string for the values it misses. 
 - Fixed 2026-03-08. Currently column1 becomes a "base column".
 	
-
-
+[ ] - Add functionality to add values for a column (add column)
 
 
 ## LOG
