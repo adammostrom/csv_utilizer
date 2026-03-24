@@ -16,8 +16,6 @@
 //	    File to write as a table (multiple rows and columns)
 //	-target string
 //	    Target CSV file to append data to (required)
-//	-delimiter string
-//	    Delimiters to use when parsing input files (default: "\t\n;")
 //
 // The utility reads input files, parses them according to the specified format,
 // and appends the parsed data to the target CSV file in append mode.

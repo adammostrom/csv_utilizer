@@ -21,9 +21,6 @@ For adding column(s) to an existing csv file:
 
 `> go run main.go -target <file.csv> -col <column.txt> -col <column2.txt> ...`
 
-For adding a delimiter option (will apply to all file-arguments)
-
-`> go run main.go -target <file.csv> -col <column.txt> -delimiter tab`
 
 ## Flags
 
@@ -37,6 +34,6 @@ Flags:
     File to write as a table (multiple rows and columns)
 -target string
     Target CSV file to append data to (required)
--delimiter string
-    Delimiters to use when parsing input files (default: "\t\n;")
 
+## Upcoming:
+Delimiter
