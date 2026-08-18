@@ -227,6 +227,11 @@ func appendCol(trg [][]string, srcs ...[][]string) [][]string {
 	return trg
 }
 
+// Another functionality, take a csv, and remove columns
+func removeColumn()
+
+// Alternative to use CUT: cut -d',' -f1 export_completed_jira.csv > stripped_export_jira.csv
+
 // writeCSV writes [][]string to a CSV file
 func writeCSV(table [][]string, path string) {
 
